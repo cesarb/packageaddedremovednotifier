@@ -2,8 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="net.cesarb.android.packageaddedremovednotifier"
       android:versionCode="1"
-      android:versionName="1.0">
-    <application android:label="@string/app_name" android:icon="@drawable/ic_launcher">
+      android:versionName="1.0" android:installLocation="internalOnly">
+    <uses-sdk android:targetSdkVersion="15" android:minSdkVersion="4"/>
+    <uses-feature android:name="android.hardware.faketouch"/>
+    <uses-feature android:required="false" android:name="android.hardware.touchscreen"/>
+    <application android:label="@string/app_name" android:icon="@drawable/ic_launcher" android:hardwareAccelerated="true">
         <activity android:name="PackageAddedRemovedNotifier"
                   android:label="@string/app_name">
             <intent-filter>
@@ -11,5 +14,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver android:name="PackageAddedRemovedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
