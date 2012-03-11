@@ -1,9 +1,12 @@
 package net.cesarb.android.packageaddedremovednotifier;
 
+import net.cesarb.android.packageaddedremovednotifier.PackageDatabase.PackageEvent;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -15,6 +18,8 @@ public class PackageAddedRemovedReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		long timestamp = System.currentTimeMillis();
+
 		String packageName = getPackageName(intent);
 		if (packageName == null)
 			return;
@@ -28,12 +33,12 @@ public class PackageAddedRemovedReceiver extends BroadcastReceiver {
 			String applicationLabel = getApplicationLabel(packageManager, packageInfo);
 
 			if (!replacing)
-				packageAdded(context, packageName, packageInfo, applicationLabel);
+				packageAdded(context, timestamp, packageName, packageInfo, applicationLabel);
 			else
-				packageReplaced(context, packageName, packageInfo, applicationLabel);
+				packageReplaced(context, timestamp, packageName, packageInfo, applicationLabel);
 		} else if (Intent.ACTION_PACKAGE_REMOVED.equals(intentAction)) {
 			if (!replacing)
-				packageRemoved(context, packageName);
+				packageRemoved(context, timestamp, packageName);
 		}
 	}
 
@@ -67,36 +72,68 @@ public class PackageAddedRemovedReceiver extends BroadcastReceiver {
 		return applicationLabel.toString();
 	}
 
-	private void packageAdded(Context context, String packageName, PackageInfo packageInfo, String applicationLabel) {
-		String contentText = packageInfo != null ? packageName + " " + packageInfo.versionName : packageName;
-		Notification notification = createNotification(context, "added", contentText);
-		notify(context, notification);
+	private void packageAdded(Context context, long timestamp, String packageName, PackageInfo packageInfo, String applicationLabel) {
+		long id = insertPackage(context, timestamp, true, false, packageName, packageInfo, applicationLabel);
+
+		String contentText = getNotificationContentText(packageName, packageInfo);
+		Notification notification = createNotification(context, "added", contentText, timestamp);
+		notify(context, id, notification);
 	}
 
-	private void packageReplaced(Context context, String packageName, PackageInfo packageInfo, String applicationLabel) {
-		String contentText = packageInfo != null ? packageName + " " + packageInfo.versionName : packageName;
-		Notification notification = createNotification(context, "updated", contentText);
-		notify(context, notification);
+	private void packageReplaced(Context context, long timestamp, String packageName, PackageInfo packageInfo, String applicationLabel) {
+		long id = insertPackage(context, timestamp, true, true, packageName, packageInfo, applicationLabel);
+
+		String contentText = getNotificationContentText(packageName, packageInfo);
+		Notification notification = createNotification(context, "updated", contentText, timestamp);
+		notify(context, id, notification);
 	}
 
-	private void packageRemoved(Context context, String packageName) {
-		Notification notification = createNotification(context, "removed", packageName);
-		notify(context, notification);
+	private void packageRemoved(Context context, long timestamp, String packageName) {
+		long id = insertPackage(context, timestamp, false, false, packageName, null, null);
+
+		Notification notification = createNotification(context, "removed", packageName, timestamp);
+		notify(context, id, notification);
 	}
 
-	private Notification createNotification(Context context, String action, String contentText) {
+	private long insertPackage(Context context, long timestamp, boolean added, boolean replacing, String packageName, PackageInfo packageInfo, String applicationLabel) {
+		ContentValues values = new ContentValues();
+
+		values.put(PackageEvent.EVENT_TIMESTAMP, timestamp);
+		values.put(PackageEvent.EVENT_ADDED, added);
+		values.put(PackageEvent.EVENT_REPLACING, replacing);
+		values.put(PackageEvent.PACKAGE_NAME, packageName);
+
+		if (packageInfo != null) {
+			values.put(PackageEvent.PACKAGE_VERSION_CODE, packageInfo.versionCode);
+			values.put(PackageEvent.PACKAGE_VERSION_NAME, packageInfo.versionName);
+		}
+		if (applicationLabel != null)
+			values.put(PackageEvent.APPLICATION_LABEL, applicationLabel);
+
+		Uri contentUri = context.getContentResolver().insert(PackageEvent.CONTENT_URI, values);
+		if (contentUri == null)
+			return 0;
+
+		return ContentUris.parseId(contentUri);
+	}
+
+	private String getNotificationContentText(String packageName, PackageInfo packageInfo) {
+		return packageInfo != null ? packageName + " " + packageInfo.versionName : packageName;
+	}
+
+	private Notification createNotification(Context context, String action, String contentText, long timestamp) {
 		Intent intent = new Intent(context, PackageAddedRemovedNotifier.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
 		String message = "Package " + action;
-		Notification notification = new Notification(R.drawable.ic_stat_notify_package, message, System.currentTimeMillis());
+		Notification notification = new Notification(R.drawable.ic_stat_notify_package, message, timestamp);
 		notification.setLatestEventInfo(context, message, contentText, contentIntent);
 		return notification;
 	}
 
-	private void notify(Context context, Notification notification) {
+	private void notify(Context context, long id, Notification notification) {
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		notificationManager.notify(0, notification);
+		notificationManager.notify((int) id, notification);
 	}
 
 }
