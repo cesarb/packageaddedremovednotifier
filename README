@@ -1,0 +1,14 @@
+Package Added/Removed Notifier
+
+This small Android utility alerts you via a status bar notification
+whenever a package is installed, updated, or removed. It also logs all
+these events, and allows you to view the log later.
+
+The code is written to run on Android 1.6 or newer; however, the
+notification icons for Android older than 3.0 are missing, so the
+minimum API level has been set to 11. If icons are provided for API
+level 9 (res/drawable-*dpi-v9/) and API level 4 (res/drawable-*dpi/), it
+should work fine on these older devices (currently untested).
+
+To compile this code, you need to put android-support-v4.jar (found in
+the Support Package) in the libs/ directory.
