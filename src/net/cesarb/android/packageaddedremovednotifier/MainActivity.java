@@ -16,7 +16,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class PackageAddedRemovedNotifier extends FragmentActivity implements LoaderCallbacks<Cursor>
+public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor>
 {
 
 	private static class PackageEventCursorAdapter extends

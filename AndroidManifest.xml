@@ -7,7 +7,7 @@
     <uses-feature android:name="android.hardware.faketouch"/>
     <uses-feature android:required="false" android:name="android.hardware.touchscreen"/>
     <application android:label="@string/app_name" android:icon="@drawable/ic_launcher" android:hardwareAccelerated="true">
-        <activity android:name="PackageAddedRemovedNotifier"
+        <activity android:name=".MainActivity"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

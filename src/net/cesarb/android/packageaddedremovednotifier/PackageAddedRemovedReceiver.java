@@ -125,7 +125,7 @@ public class PackageAddedRemovedReceiver extends BroadcastReceiver {
 	}
 
 	private Notification createNotification(Context context, String action, String contentText, long timestamp) {
-		Intent intent = makeRestartActivityTask(new ComponentName(context, PackageAddedRemovedNotifier.class));
+		Intent intent = makeRestartActivityTask(new ComponentName(context, MainActivity.class));
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
 		String message = "Package " + action;
