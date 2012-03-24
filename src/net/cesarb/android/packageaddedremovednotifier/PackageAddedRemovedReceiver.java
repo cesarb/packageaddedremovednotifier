@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,6 +14,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.IntentCompat;
 
 public class PackageAddedRemovedReceiver extends BroadcastReceiver {
 
@@ -117,18 +120,33 @@ public class PackageAddedRemovedReceiver extends BroadcastReceiver {
 		return ContentUris.parseId(contentUri);
 	}
 
-	private String getNotificationContentText(String packageName, PackageInfo packageInfo) {
+	private static String getNotificationContentText(String packageName, PackageInfo packageInfo) {
 		return packageInfo != null ? packageName + " " + packageInfo.versionName : packageName;
 	}
 
 	private Notification createNotification(Context context, String action, String contentText, long timestamp) {
-		Intent intent = new Intent(context, PackageAddedRemovedNotifier.class);
+		Intent intent = makeRestartActivityTask(new ComponentName(context, PackageAddedRemovedNotifier.class));
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
 		String message = "Package " + action;
-		Notification notification = new Notification(R.drawable.ic_stat_notify_package, message, timestamp);
-		notification.setLatestEventInfo(context, message, contentText, contentIntent);
-		return notification;
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+		builder.setSmallIcon(R.drawable.ic_stat_notify_package);
+		builder.setTicker(message);
+		builder.setWhen(timestamp);
+		builder.setContentTitle(message);
+		builder.setContentText(contentText);
+		builder.setContentIntent(contentIntent);
+		builder.setAutoCancel(true);
+		return builder.getNotification();
+	}
+
+	// Missing from android.support.v4.content.IntentCompat
+	private static Intent makeRestartActivityTask(ComponentName mainActivity) {
+		Intent intent = new Intent(Intent.ACTION_MAIN);
+		intent.setComponent(mainActivity);
+		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+		return intent;
 	}
 
 	private void notify(Context context, long id, Notification notification) {
