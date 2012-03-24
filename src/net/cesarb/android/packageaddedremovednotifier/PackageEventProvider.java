@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.v4.database.DatabaseUtilsCompat;
 
-public class PackageAddedRemovedProvider extends ContentProvider {
+public class PackageEventProvider extends ContentProvider {
 
 	private static final String EVENTS_TABLE = "events";
 
