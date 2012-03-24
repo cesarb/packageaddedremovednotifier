@@ -10,9 +10,9 @@ public final class PackageDatabase {
 
 	public static final class PackageEvent implements BaseColumns {
 
-		public static final Uri CONTENT_URI = Uri.parse("content://net.cesarb.android.packageaddedremovednotifier.packageaddedremovedprovider/events");
-		public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.cesarb.packageaddedremovednotifier.package";
-		public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.cesarb.packageaddedremovednotifier.package";
+		public static final Uri CONTENT_URI = Uri.parse("content://net.cesarb.android.packageaddedremovednotifier/events");
+		public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.cesarb.packageaddedremovednotifier.packageevent";
+		public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.cesarb.packageaddedremovednotifier.packageevent";
 
 		public static final String PACKAGE_NAME = "packagename";
 		public static final String PACKAGE_VERSION_CODE = "versioncode";

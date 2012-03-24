@@ -21,6 +21,6 @@
                 <data android:scheme="package"/>
             </intent-filter>
         </receiver>
-        <provider android:exported="false" android:name=".PackageEventProvider" android:authorities="net.cesarb.android.packageaddedremovednotifier.packageaddedremovedprovider"></provider>
+        <provider android:exported="false" android:name=".PackageEventProvider" android:authorities="net.cesarb.android.packageaddedremovednotifier"></provider>
     </application>
 </manifest>
