@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/list"
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    android:name="net.cesarb.android.packageaddedremovednotifier.PackageEventListFragment"
+    android:id="@+id/events"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
-</ListView>
+    android:layout_height="fill_parent" />
