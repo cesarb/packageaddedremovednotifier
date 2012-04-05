@@ -79,7 +79,7 @@ public class PackageEventReceiver extends BroadcastReceiver {
 		long id = insertPackage(context, timestamp, true, false, packageName, packageInfo, applicationLabel);
 
 		String contentText = getNotificationContentText(packageName, packageInfo);
-		Notification notification = createNotification(context, "added", contentText, timestamp);
+		Notification notification = createNotification(context, R.string.package_added, contentText, timestamp);
 		notify(context, id, notification);
 	}
 
@@ -87,14 +87,14 @@ public class PackageEventReceiver extends BroadcastReceiver {
 		long id = insertPackage(context, timestamp, true, true, packageName, packageInfo, applicationLabel);
 
 		String contentText = getNotificationContentText(packageName, packageInfo);
-		Notification notification = createNotification(context, "updated", contentText, timestamp);
+		Notification notification = createNotification(context, R.string.package_replaced, contentText, timestamp);
 		notify(context, id, notification);
 	}
 
 	private void packageRemoved(Context context, long timestamp, String packageName) {
 		long id = insertPackage(context, timestamp, false, false, packageName, null, null);
 
-		Notification notification = createNotification(context, "removed", packageName, timestamp);
+		Notification notification = createNotification(context, R.string.package_removed, packageName, timestamp);
 		notify(context, id, notification);
 	}
 
@@ -124,11 +124,11 @@ public class PackageEventReceiver extends BroadcastReceiver {
 		return packageInfo != null ? packageName + " " + packageInfo.versionName : packageName;
 	}
 
-	private Notification createNotification(Context context, String action, String contentText, long timestamp) {
+	private Notification createNotification(Context context, int action, String contentText, long timestamp) {
 		Intent intent = makeRestartActivityTask(new ComponentName(context, MainActivity.class));
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-		String message = "Package " + action;
+		String message = context.getString(action);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		builder.setSmallIcon(R.drawable.ic_stat_notify_package);
 		builder.setTicker(message);

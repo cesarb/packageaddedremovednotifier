@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Package Added/Removed Notifier</string>
+    <string name="event_added">Added</string>
+    <string name="event_replaced">Updated</string>
+    <string name="event_removed">Removed</string>
+    <string name="package_added">Package added</string>
+    <string name="package_replaced">Package updated</string>
+    <string name="package_removed">Package removed</string>
 </resources>

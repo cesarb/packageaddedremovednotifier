@@ -35,7 +35,7 @@ public class PackageEventListFragment extends ListFragment implements LoaderCall
 			Long packageVersionCode = getLongOrNull(cursor, PackageEvent.PACKAGE_VERSION_CODE);
 			long timestamp = getLong(cursor, PackageEvent.EVENT_TIMESTAMP);
 
-			String event = added ? (replacing ? "Updated" : "Added") : "Removed";
+			String event = context.getString(added ? (replacing ? R.string.event_replaced : R.string.event_added) : R.string.event_removed);
 			((TextView) view.findViewById(R.id.packageEventAndLabel)).setText(applicationLabel != null ? event + " " + applicationLabel : event);
 			((TextView) view.findViewById(R.id.packageNameAndVersion)).setText(formatPackageNameAndVersion(packageName, packageVersionName, packageVersionCode));
 			((TextView) view.findViewById(R.id.timestamp)).setText(DateFormat.getDateTimeInstance().format(new Date(timestamp)));
