@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Notificador de Pacote Adicionado/Removido</string>
+    <string name="event_added">Adicionado</string>
+    <string name="event_replaced">Atualizado</string>
+    <string name="event_removed">Removido</string>
+    <string name="package_added">Pacote adicionado</string>
+    <string name="package_replaced">Pacote atualizado</string>
+    <string name="package_removed">Pacote removido</string>
+</resources>
