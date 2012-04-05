@@ -27,17 +27,60 @@ public class PackageEventListFragment extends ListFragment implements LoaderCall
 
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
-			boolean added = cursor.getLong(cursor.getColumnIndexOrThrow(PackageEvent.EVENT_ADDED)) != 0;
-			boolean replacing = cursor.getLong(cursor.getColumnIndexOrThrow(PackageEvent.EVENT_REPLACING)) != 0;
-			String applicationLabel = cursor.getString(cursor.getColumnIndexOrThrow(PackageEvent.APPLICATION_LABEL));
-			String packageName = cursor.getString(cursor.getColumnIndexOrThrow(PackageEvent.PACKAGE_NAME));
-			String packageVersion = cursor.getString(cursor.getColumnIndexOrThrow(PackageEvent.PACKAGE_VERSION_NAME));
-			long timestamp = cursor.getLong(cursor.getColumnIndexOrThrow(PackageEvent.EVENT_TIMESTAMP));
+			boolean added = getBoolean(cursor, PackageEvent.EVENT_ADDED);
+			boolean replacing = getBoolean(cursor, PackageEvent.EVENT_REPLACING);
+			String applicationLabel = getStringOrNull(cursor, PackageEvent.APPLICATION_LABEL);
+			String packageName = getString(cursor, PackageEvent.PACKAGE_NAME);
+			String packageVersionName = getStringOrNull(cursor, PackageEvent.PACKAGE_VERSION_NAME);
+			Long packageVersionCode = getLongOrNull(cursor, PackageEvent.PACKAGE_VERSION_CODE);
+			long timestamp = getLong(cursor, PackageEvent.EVENT_TIMESTAMP);
 
 			String event = added ? (replacing ? "Updated" : "Added") : "Removed";
 			((TextView) view.findViewById(R.id.packageEventAndLabel)).setText(applicationLabel != null ? event + " " + applicationLabel : event);
-			((TextView) view.findViewById(R.id.packageNameAndVersion)).setText(packageVersion != null ? packageName + " " + packageVersion : packageName);
+			((TextView) view.findViewById(R.id.packageNameAndVersion)).setText(formatPackageNameAndVersion(packageName, packageVersionName, packageVersionCode));
 			((TextView) view.findViewById(R.id.timestamp)).setText(DateFormat.getDateTimeInstance().format(new Date(timestamp)));
+		}
+
+		private static boolean getBoolean(Cursor cursor, String columnName) {
+			return getLong(cursor, columnName) != 0;
+		}
+
+		private static long getLong(Cursor cursor, String columnName) {
+			int columnIndex = cursor.getColumnIndexOrThrow(columnName);
+			return cursor.getLong(columnIndex);
+		}
+
+		private static Long getLongOrNull(Cursor cursor, String columnName) {
+			int columnIndex = cursor.getColumnIndexOrThrow(columnName);
+			if (cursor.isNull(columnIndex))
+				return null;
+			return cursor.getLong(columnIndex);
+		}
+
+		private static String getString(Cursor cursor, String columnName) {
+			int columnIndex = cursor.getColumnIndexOrThrow(columnName);
+			return cursor.getString(columnIndex);
+		}
+
+		private static String getStringOrNull(Cursor cursor, String columnName) {
+			int columnIndex = cursor.getColumnIndexOrThrow(columnName);
+			if (cursor.isNull(columnIndex))
+				return null;
+			return cursor.getString(columnIndex);
+		}
+
+		private static String formatPackageNameAndVersion(String packageName, String packageVersionName, Long packageVersionCode) {
+			StringBuilder builder = new StringBuilder(packageName);
+			if (packageVersionName != null) {
+				builder.append(' ');
+				builder.append(packageVersionName);
+			}
+			if (packageVersionCode != null) {
+				builder.append(" (");
+				builder.append((long) packageVersionCode);
+				builder.append(')');
+			}
+			return builder.toString();
 		}
 
 	}
